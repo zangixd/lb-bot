@@ -165,10 +165,17 @@ export default {
 		// Button interaction listener
 		const collector = response.resource.message.createMessageComponentCollector({
 			componentType: ComponentType.Button,
-			time: 30_000
+			time: 30_000,
 		});
 
 		collector.on('collect', async (i) => {
+			if (i.user.id !== interaction.user.id) {
+				return i.reply({
+					content: 'Only the user who ran this command can interact',
+					flags: MessageFlags.Ephemeral
+				});
+			}
+
 			collector.resetTimer();
 
 			const button = i.customId;
