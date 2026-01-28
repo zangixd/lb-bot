@@ -42,12 +42,14 @@ function createEmbed(leaderboardData, player, page) {
 			entries = entries.replace(new RegExp(`(\\*\\*#[0-9]+\\*\\* - )${name}( [0-9\-:]+)`), `### $1**${name}**$2`);
 		}
 
+		const description = entries.length > 0 ? entries : '*No leaderboard entries found.*';
+
 		// Return Embed
 		return new EmbedBuilder()
 			.setColor(0x00ff00)
 			.setAuthor({ name: 'Krunker Leaderboards'})
 			.setTitle(`${lbType} for ${leaderboardData.map_name}`)
-			.setDescription(entries)
+			.setDescription(description)
 			.setFooter({ text: `Page ${page ?? 1}` });
 }
 
