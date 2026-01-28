@@ -166,16 +166,19 @@ export default {
 		const collector = response.resource.message.createMessageComponentCollector({
 			componentType: ComponentType.Button,
 			time: 30_000,
+			filter: (i) => {
+				if (i.user.id !== interaction.user.id) {
+					i.reply({
+						content: 'Not allowed',
+						flags: MessageFlags.Ephemeral
+					});
+					return false;
+				}
+				return true;
+			}
 		});
 
 		collector.on('collect', async (i) => {
-			if (i.user.id !== interaction.user.id) {
-				return i.reply({
-					content: 'Only the user who ran this command can interact',
-					flags: MessageFlags.Ephemeral
-				});
-			}
-
 			collector.resetTimer();
 
 			const button = i.customId;
@@ -205,12 +208,18 @@ export default {
 				await i.showModal(modal);
 
 				try {
-					const modalSubmit = await i.awaitModalSubmit({
-						filter: (m) =>
-							m.customId === 'selectPageModal' &&
-							m.user.id === i.user.id,
-						time: 30_000
-					});
+					let modalSubmit;
+					try {
+						modalSubmit = await i.awaitModalSubmit({
+							filter: (m) =>
+								m.customId === 'selectPageModal' &&
+								m.user.id === i.user.id,
+							time: 30_000
+						});
+					} catch {
+						// modal timed out — just exit quietly
+						return;
+					}
 
 					const inputPage = Number(modalSubmit.fields.getTextInputValue('pageInput'));
 
@@ -266,12 +275,18 @@ export default {
 			} else if (button === 'findPlayer') {
 				await i.showModal(createFindPlayerModal());
 
-				const modalSubmit = await i.awaitModalSubmit({
-					filter: (m) =>
-						m.customId === 'findPlayerModal' &&
-						m.user.id === i.user.id,
-					time: 30_000
-				});
+				let modalSubmit;
+				try {
+					modalSubmit = await i.awaitModalSubmit({
+						filter: (m) =>
+							m.customId === 'selectPageModal' &&
+							m.user.id === i.user.id,
+						time: 30_000
+					});
+				} catch {
+					// modal timed out — just exit quietly
+					return;
+				}
 
 				player = modalSubmit.fields.getTextInputValue('playerInput');
 
