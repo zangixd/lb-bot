@@ -315,15 +315,21 @@ export default {
 		});
 
 		collector.on('end', async () => {
-			const disabledRow = new ActionRowBuilder()
-				.addComponents(row.components.map(button => ButtonBuilder
-					.from(button)
-					.setDisabled(true)
-				));
+			try {
+				const disabledRow = new ActionRowBuilder()
+					.addComponents(
+						row.components.map(button => ButtonBuilder
+							.from(button)
+							.setDisabled(true)
+						)
+					);
 
-			await interaction.editReply({
-				components: [disabledRow]
-			});
+				await response.resource.message.edit({
+					components: [disabledRow]
+				});
+			} catch (error) {
+				console.log('Collector end edit failed:', error.code);
+			}
 		});
 	}
 };
