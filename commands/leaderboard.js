@@ -206,8 +206,7 @@ export default {
 				});
 
 			} else if (button === 'selectPage') {
-				const modal = createSelectPageModal();
-				await i.showModal(modal);
+				await i.showModal(createSelectPageModal());
 
 				try {
 					let modalSubmit;
@@ -281,7 +280,7 @@ export default {
 				try {
 					modalSubmit = await i.awaitModalSubmit({
 						filter: (m) =>
-							m.customId === 'selectPageModal' &&
+							m.customId === 'findPlayerModal' &&
 							m.user.id === i.user.id,
 						time: 30_000
 					});
@@ -316,20 +315,19 @@ export default {
 
 		collector.on('end', async () => {
 			try {
+				if (!response?.resource?.message) return;
+
 				const disabledRow = new ActionRowBuilder()
-					.addComponents(
-						row.components.map(button => ButtonBuilder
-							.from(button)
-							.setDisabled(true)
-						)
-					);
+					.addComponents(row.components.map(button => ButtonBuilder
+						.from(button)
+						.setDisabled(true)
+					)
+				);
 
 				await response.resource.message.edit({
 					components: [disabledRow]
 				});
-			} catch (error) {
-				console.log('Collector end edit failed:', error.code);
-			}
+			} catch {}
 		});
 	}
 };
