@@ -13,6 +13,7 @@ export default {
 				return;
 			}
 
+			console.log(command);
 			executeCommand(interaction, command);
 		}
 	}

@@ -191,7 +191,7 @@ export default {
 				try {
 					leaderboardData = await getPage(map, page, player);
 				} catch (err) {
-					return i.reply({
+					return i.followUp({
 						content: `No leaderboard found for ${map}`,
 						flags: MessageFlags.Ephemeral
 					});
@@ -236,7 +236,7 @@ export default {
 					try {
 						leaderboardData = await getPage(map, page, player);
 					} catch (err) {
-						return i.reply({
+						return modalSubmit.followUp({
 							content: `No leaderboard found for ${map}`,
 							flags: MessageFlags.Ephemeral
 						});
@@ -259,7 +259,7 @@ export default {
 				try {
 					leaderboardData = await getPage(map, page, player);
 				} catch (err) {
-					return i.reply({
+					return i.followUp({
 						content: `No leaderboard found for ${map}`,
 						flags: MessageFlags.Ephemeral
 					});
@@ -294,7 +294,7 @@ export default {
 				try {
 					leaderboardData = await getPage(map, page, player);
 				} catch (err) {
-					return i.reply({
+					return i.followUp({
 						content: `No leaderboard found for ${map}`,
 						flags: MessageFlags.Ephemeral
 					});
