@@ -191,7 +191,7 @@ export default {
 				try {
 					leaderboardData = await getPage(map, page, player);
 				} catch (err) {
-					return i.followUp({
+					return await i.reply({
 						content: `No leaderboard found for ${map}`,
 						flags: MessageFlags.Ephemeral
 					});
@@ -200,66 +200,59 @@ export default {
 				embed = createEmbed(leaderboardData, player, page);
 				row = createRow(page, leaderboardData.entries.length);
 
-				i.update({ 
+				await i.update({
 					embeds: [embed],
 					components: [row]
 				});
-
 			} else if (button === 'selectPage') {
 				await i.showModal(createSelectPageModal());
 
+				let modalSubmit;
 				try {
-					let modalSubmit;
-					try {
-						modalSubmit = await i.awaitModalSubmit({
-							filter: (m) =>
-								m.customId === 'selectPageModal' &&
-								m.user.id === i.user.id,
-							time: 30_000
-						});
-					} catch {
-						// modal timed out — just exit quietly
-						return;
-					}
-
-					const inputPage = Number(modalSubmit.fields.getTextInputValue('pageInput'));
-
-					if (isNaN(inputPage) || inputPage < 1) {
-						return modalSubmit.reply({
-							content: 'Invalid page number',
-							flags: MessageFlags.Ephemeral
-						});
-					}
-
-					page = inputPage;
-
-					try {
-						leaderboardData = await getPage(map, page, player);
-					} catch (err) {
-						return modalSubmit.followUp({
-							content: `No leaderboard found for ${map}`,
-							flags: MessageFlags.Ephemeral
-						});
-					}
-
-					embed = createEmbed(leaderboardData, player, page);
-					row = createRow(page, leaderboardData.entries.length);
-
-					await modalSubmit.update({
-						embeds: [embed],
-						components: [row]
+					modalSubmit = await i.awaitModalSubmit({
+						filter: (m) =>
+							m.customId === 'selectPageModal' &&
+							m.user.id === i.user.id,
+						time: 30_000
 					});
-				} catch (error) {
-					console.log(error);
+				} catch {
+					return;
 				}
 
+				const inputPage = Number(modalSubmit.fields.getTextInputValue('pageInput'));
+
+				if (isNaN(inputPage) || inputPage < 1) {
+					return await modalSubmit.reply({
+						content: 'Invalid page number',
+						flags: MessageFlags.Ephemeral
+					});
+				}
+
+				page = inputPage;
+
+				try {
+					leaderboardData = await getPage(map, page, player);
+				} catch (err) {
+					return await modalSubmit.reply({
+						content: `No leaderboard found for ${map}`,
+						flags: MessageFlags.Ephemeral
+					});
+				}
+
+				embed = createEmbed(leaderboardData, player, page);
+				row = createRow(page, leaderboardData.entries.length);
+
+				await modalSubmit.update({
+					embeds: [embed],
+					components: [row]
+				});
 			} else if (button === 'nextPage') {
 				page++;
 
 				try {
 					leaderboardData = await getPage(map, page, player);
 				} catch (err) {
-					return i.followUp({
+					return await i.reply({
 						content: `No leaderboard found for ${map}`,
 						flags: MessageFlags.Ephemeral
 					});
@@ -268,11 +261,10 @@ export default {
 				embed = createEmbed(leaderboardData, player, page);
 				row = createRow(page, leaderboardData.entries.length);
 
-				i.update({ 
+				await i.update({
 					embeds: [embed],
 					components: [row]
 				});
-
 			} else if (button === 'findPlayer') {
 				await i.showModal(createFindPlayerModal());
 
@@ -285,7 +277,6 @@ export default {
 						time: 30_000
 					});
 				} catch {
-					// modal timed out — just exit quietly
 					return;
 				}
 
@@ -294,7 +285,7 @@ export default {
 				try {
 					leaderboardData = await getPage(map, page, player);
 				} catch (err) {
-					return i.followUp({
+					return await modalSubmit.reply({
 						content: `No leaderboard found for ${map}`,
 						flags: MessageFlags.Ephemeral
 					});

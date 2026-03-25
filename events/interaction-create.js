@@ -14,7 +14,7 @@ export default {
 			}
 
 			console.log(command);
-			executeCommand(interaction, command);
+			await executeCommand(interaction, command);
 		}
 	}
 }
